@@ -1,0 +1,48 @@
+우선 코드부터
+``` kotlin
+package com.example.event
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.util.Log
+import android.view.MotionEvent
+import android.view.View
+
+class MainActivity : AppCompatActivity() {
+    private val view1 : View by lazy {
+        findViewById(R.id.view1)
+    }
+
+//    private val view2 : View by lazy {
+//        findViewById(R.id.view2)
+//    }
+//
+//    private val view3 : View by lazy {
+//        findViewById(R.id.view3)
+//    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        view1ClickListener()
+    }
+
+    private fun view1ClickListener() {
+        view1.setOnTouchListener { _:View, event:MotionEvent ->
+            when(event.action) {
+                MotionEvent.ACTION_DOWN -> Log.d("action", "손가락 눌림")
+                MotionEvent.ACTION_MOVE -> Log.d("action", "손가락 이동")
+                MotionEvent.ACTION_UP -> Log.d("action", "손가락 땜")
+            }
+            return@setOnTouchListener true
+        }
+    }
+}
+```
+setOnTouchLister의 Motion 감지 과정을 알고 싶어서 직접 구현하고 Log.d로 출력해보는데 화면을 처음 눌렀을 때만 로그가 찍히고 손가락을 움직이거나 땠을 때는 로그가 찍히지 않길래 어리둥절 하던 도중 return 값을 true로 변경해 주었더니 정상적으로 로그가 찍혔다. 첫 번째 사진이 **return@setOnTouchListener false**이고 두 번째 사진이 **return@setOnTouchListener True**이다.
+
+![](https://images.velog.io/images/k906506/post/de533ed5-e6a0-4a57-9f37-6b6b72345854/image.png)
+
+![](https://images.velog.io/images/k906506/post/95f763ca-4f39-464a-ab62-3a072754fe6f/image.png)
+
+정리하자면 true는 발생한 터치 이벤트를 전달하지 않고 끝내고, false는 발생한 터치 이벤트를 이후에 과정(**onTouch -> onClick -> onLongClick**)까지 전달하게 된다.
